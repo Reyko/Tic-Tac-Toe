@@ -13,6 +13,8 @@ class Board
   # of marker, unless it has already been set.
   #
 	def mark(x, y, marker)
+		#binding.pry
+		@board[x.to_i][y.to_i] = marker
 	end
 
 	# TODO - Have the board return each of the possible winning combinations.
@@ -23,15 +25,10 @@ class Board
 	# TODO - Add code to return the board as a String, so that it appears
 	# in a 3 x 3 grid
 	def to_s
-		
 		board = ""
 		@board.each do |x|
 			board += x.join(" ")
-
-			#x.each do |y|
 			 	board += "\n"
-			 #end
-
 		end
 		#binding.pry
 		board
@@ -41,7 +38,6 @@ end
 class Game
 	def initialize
 		@board = Board.new
-		print @board.to_s
 		@players = [Nought, Cross]
 		@turn = @players.sample
 	end
@@ -49,6 +45,7 @@ class Game
 	# TODO - The main game loop goes in here.
 	#
 	def play
+		
 		# While the game is still going on, do the following:
 			# 1. Show the board to the user
 			# 2. Prompt for an co-ordinate on the Board that we want to target
@@ -57,6 +54,15 @@ class Game
 			# 4. If we've got a winner, show the board and show a congratulations method.
 			# 5. Otherwise call next_turn and repeat.
 			# 6. How to detect a draw?
+		print @board.to_s
+		puts "Please select which tile you want to target in x"
+		x = gets.chomp
+		puts "Please select which tile you want to target in y"
+		y = gets.chomp
+		@board.mark(x,y,@turn.marker)
+
+
+
 	end
 
   # TODO - Return the next player's turn. I.e. not @turn but the other one.
