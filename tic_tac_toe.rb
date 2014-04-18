@@ -23,12 +23,25 @@ class Board
 	# TODO - Add code to return the board as a String, so that it appears
 	# in a 3 x 3 grid
 	def to_s
+		
+		board = ""
+		@board.each do |x|
+			board += x.join(" ")
+
+			#x.each do |y|
+			 	board += "\n"
+			 #end
+
+		end
+		#binding.pry
+		board
 	end
 end
 
 class Game
 	def initialize
 		@board = Board.new
+		print @board.to_s
 		@players = [Nought, Cross]
 		@turn = @players.sample
 	end
