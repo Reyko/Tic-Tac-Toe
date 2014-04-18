@@ -13,7 +13,7 @@ class Board
   # of marker, unless it has already been set.
   #
 	def mark(x, y, marker)
-		#binding.pry
+		#sbinding.pry
 		@board[x.to_i][y.to_i] = marker
 	end
 
@@ -54,15 +54,42 @@ class Game
 			# 4. If we've got a winner, show the board and show a congratulations method.
 			# 5. Otherwise call next_turn and repeat.
 			# 6. How to detect a draw?
-		print @board.to_s
-		puts "Please select which tile you want to target in x"
-		x = gets.chomp
-		puts "Please select which tile you want to target in y"
-		y = gets.chomp
-		@board.mark(x,y,@turn.marker)
+		puts "Your game begins!"
+		while true
+			print @board.to_s
+			bool = true
+			
+
+			x=""
+			y=""
+			while bool
+				puts "Please select which tile you want to target in x"
+				x = gets.chomp
+
+				if x == ""
+				   x=3
+				else
+					x.to_i
+				end    
+
+				puts "Please select which tile you want to target in y"
+
+				y = gets.chomp
+				
+				if y == ""			
+				    y=3			
+				else
+					y.to_i
+				end
 
 
+				if x.to_i<3 && y.to_i<3
+					bool = false
+					@board.mark(x,y,@turn.marker)
+				end	
 
+			end			 
+		end
 	end
 
   # TODO - Return the next player's turn. I.e. not @turn but the other one.
