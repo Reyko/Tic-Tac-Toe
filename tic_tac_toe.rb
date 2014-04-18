@@ -13,13 +13,17 @@ class Board
   # of marker, unless it has already been set.
   #
 	def mark(x, y, marker)
-		#sbinding.pry
+		#binding.pry
 		@board[x.to_i][y.to_i] = marker
 	end
 
 	# TODO - Have the board return each of the possible winning combinations.
 	#
 	def each_winning_move
+
+
+
+		
 	end
 
 	# TODO - Add code to return the board as a String, so that it appears
@@ -55,40 +59,8 @@ class Game
 			# 5. Otherwise call next_turn and repeat.
 			# 6. How to detect a draw?
 		puts "Your game begins!"
-		while true
-			print @board.to_s
-			bool = true
-			
-
-			x=""
-			y=""
-			while bool
-				puts "Please select which tile you want to target in x"
-				x = gets.chomp
-
-				if x == ""
-				   x=3
-				else
-					x.to_i
-				end    
-
-				puts "Please select which tile you want to target in y"
-
-				y = gets.chomp
-				
-				if y == ""			
-				    y=3			
-				else
-					y.to_i
-				end
-
-
-				if x.to_i<3 && y.to_i<3
-					bool = false
-					@board.mark(x,y,@turn.marker)
-				end	
-
-			end			 
+		draw
+		user_choice
 		end
 	end
 
@@ -103,7 +75,41 @@ class Game
 		# Check each of the winning moves on the board, rows, cols and diagonals
 		# to see if a Player has filled a row of three consequtive squares
 	end
+
+	def user_choice 
+		while true
+			while true
+				x=""
+				y=""
+				puts "Please select which tile you want to target as x,y values"
+				# puts "Please select which tile you want to target in x"
+				# x = gets.chomp
+				input = gets.chomp.split(",")
+				x=input[0]
+				y=input[1]
+				if x==nil||y==nil
+					x,y=3
+				else
+					x.to_i
+					y.to_i
+				end
+				if x.to_i<3 && y.to_i<3
+					@board.mark(x,y,@turn.marker)
+					draw
+				    break
+				else
+					draw
+				end	
+			end		
+			#binding.pry	 
+	     end
+	end
+
+
+def draw
+	puts @board.to_s	
 end
+
 
 class Player
 	def self.filled?(row)
