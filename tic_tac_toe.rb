@@ -1,4 +1,5 @@
 require 'pry'
+require 'matrix'
 
 class Board
 	def initialize
@@ -13,18 +14,72 @@ class Board
   # of marker, unless it has already been set.
   #
 	def mark(x, y, marker)
-		#binding.pry
-		@board[x.to_i][y.to_i] = marker
+		if @board[x.to_i][y.to_i] == "."
+		 	@board[x.to_i][y.to_i] = marker
+		end
 	end
 
 	# TODO - Have the board return each of the possible winning combinations.
 	#
-	def each_winning_move
+	def each_winning_move(marker)
+		col1=[]
+		col2=[]
+		col3=[]
+		# diagonal_1 = []
+		# diagonal_2 = []
+		victory = "You won!"
+
+		@board.each do |x|
+			if x[0] == marker && x[1] == marker && x[2] == marker
+				puts victory
+			end	
+			if x[0] == marker
+			  col1.push(x[0])
+			end	
+			if x[1] == marker
+			  col2.push(x[1])	
+			end
+			if x[2] == marker
+			  col3.push(x[2])
+			end
+		end
 
 
 
+		diagonal_1 = [@board[0][0],@board[1][1],@board[2][2]]
+		diagonal_2 = [@board[0][2],@board[1][1],@board[2][0]]
+
+
+
+		if col1.length == 3 || col2.length == 3 || col3.length == 3
+			puts victory
+		end
+
+		counter=0
+		diagonal_1.each do |x|
 		
+			if x==marker
+				counter+=1
+			end
+
+			if counter==3
+			   puts victory	
+			end
+
+		end
+		counter=0
+		diagonal_2.each do |x|
+			
+			if x==marker
+				counter+=1
+			end
+			if counter==3
+				puts victory
+			end
+
+		end
 	end
+
 
 	# TODO - Add code to return the board as a String, so that it appears
 	# in a 3 x 3 grid
@@ -61,6 +116,9 @@ class Game
 		puts "Your game begins!"
 		draw
 		user_choice
+		
+
+
 		end
 	end
 
@@ -82,8 +140,6 @@ class Game
 				x=""
 				y=""
 				puts "Please select which tile you want to target as x,y values"
-				# puts "Please select which tile you want to target in x"
-				# x = gets.chomp
 				input = gets.chomp.split(",")
 				x=input[0]
 				y=input[1]
@@ -96,6 +152,7 @@ class Game
 				if x.to_i<3 && y.to_i<3
 					@board.mark(x,y,@turn.marker)
 					draw
+					@board.each_winning_move(@turn.marker)
 				    break
 				else
 					draw
