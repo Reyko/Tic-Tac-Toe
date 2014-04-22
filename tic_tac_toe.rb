@@ -1,6 +1,6 @@
 require 'pry'
-require 'matrix'
 
+$proceed = false
 class Board
 	def initialize
 		@board = [
@@ -9,78 +9,30 @@ class Board
 			%w(. . .)
 		]
 	end
-
   # TODO - Add code so that the array at co-ordinate x, y is set to the value
   # of marker, unless it has already been set.
   #
 	def mark(x, y, marker)
-		if @board[x.to_i][y.to_i] == "."
-		 	@board[x.to_i][y.to_i] = marker
+		if @board[x.to_i][y.to_i] == "." && @board[x.to_i][y.to_i]!= marker
+		   @board[x.to_i][y.to_i] = marker
+		   $proceed = true
+		else
+		   $proceed = false
 		end
 	end
-
 	# TODO - Have the board return each of the possible winning combinations.
 	#
-	def each_winning_move(marker)
-		col1=[]
-		col2=[]
-		col3=[]
-		# diagonal_1 = []
-		# diagonal_2 = []
-		victory = "You won!"
-
-		@board.each do |x|
-			if x[0] == marker && x[1] == marker && x[2] == marker
-				puts victory
-			end	
-			if x[0] == marker
-			  col1.push(x[0])
-			end	
-			if x[1] == marker
-			  col2.push(x[1])	
-			end
-			if x[2] == marker
-			  col3.push(x[2])
-			end
+	def each_winning_move
+		@board.each do |row|
+			yield row
 		end
 
-
-
-		diagonal_1 = [@board[0][0],@board[1][1],@board[2][2]]
-		diagonal_2 = [@board[0][2],@board[1][1],@board[2][0]]
-
-
-
-		if col1.length == 3 || col2.length == 3 || col3.length == 3
-			puts victory
+		@board.transpose.each do |col|
+			yield col
 		end
-
-		counter=0
-		diagonal_1.each do |x|
-		
-			if x==marker
-				counter+=1
-			end
-
-			if counter==3
-			   puts victory	
-			end
-
-		end
-		counter=0
-		diagonal_2.each do |x|
-			
-			if x==marker
-				counter+=1
-			end
-			if counter==3
-				puts victory
-			end
-
-		end
+		yield [@board[0][0], @board[1][1], @board[2][2]]
+		yield [@board[0][2], @board[1][1], @board[2][0]]
 	end
-
-
 	# TODO - Add code to return the board as a String, so that it appears
 	# in a 3 x 3 grid
 	def to_s
@@ -89,7 +41,6 @@ class Board
 			board += x.join(" ")
 			 	board += "\n"
 		end
-		#binding.pry
 		board
 	end
 end
@@ -100,11 +51,9 @@ class Game
 		@players = [Nought, Cross]
 		@turn = @players.sample
 	end
-
 	# TODO - The main game loop goes in here.
 	#
 	def play
-		
 		# While the game is still going on, do the following:
 			# 1. Show the board to the user
 			# 2. Prompt for an co-ordinate on the Board that we want to target
@@ -113,25 +62,43 @@ class Game
 			# 4. If we've got a winner, show the board and show a congratulations method.
 			# 5. Otherwise call next_turn and repeat.
 			# 6. How to detect a draw?
-		puts "Your game begins!"
-		draw
-		user_choice
-		
+			puts "Your game begins!"
+			draw
+			user_choice
 
-
-		end
 	end
-
   # TODO - Return the next player's turn. I.e. not @turn but the other one.
   #
 	def next_turn
+		if @turn == @players[0]
+			@turn = @players[1]
+		elsif @turn == @players[1]
+			@turn = @players[0]
+		end
 	end
 
 	# TODO - Return the winning Class if they have won, otherwise return nil.
 	#
+	$counter=0
 	def winner
 		# Check each of the winning moves on the board, rows, cols and diagonals
-		# to see if a Player has filled a row of three consequtive squares
+		# to see if a Player has filled a row of three consequtive squares	
+			@board.each_winning_move do |move|
+				if move[0] == @turn.marker && move[1] == @turn.marker && move[2] == @turn.marker
+						puts "#{@turn} won!"
+						Process.exit(0)
+				end	
+			end
+
+	 if $proceed		
+		 $counter+=1
+	 end
+		if $counter == 9
+			puts "Draw!"
+		    Process.exit(0)
+		end
+		 #binding.pry
+
 	end
 
 	def user_choice 
@@ -149,19 +116,21 @@ class Game
 					x.to_i
 					y.to_i
 				end
-				if x.to_i<3 && y.to_i<3
+				if x.to_i<3 && y.to_i<3 
 					@board.mark(x,y,@turn.marker)
 					draw
-					@board.each_winning_move(@turn.marker)
-				    break
+					winner	
+					next_turn
+					break
+
 				else
 					draw
-				end	
-			end		
-			#binding.pry	 
-	     end
-	end
 
+				end	
+			end		 
+	     end
+	 end
+end
 
 def draw
 	puts @board.to_s	
